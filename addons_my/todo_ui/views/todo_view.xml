@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<act_window id="action_todo_task_button"
+	           name="To-Do Tasks"
+	           res_model="todo.task"
+	           view_mode="tree,form,calendar,graph,pivot"
+	           domain="[('user_id','=',default_user_id)]"
+	           />
+
+	<record id="view_form_todo_task_ui" model="ir.ui.view">
+		<field name="model">todo.task</field>
+		<field name="priority">10</field>
+		<field name="arch" type="xml">
+			<form>
+				<header>
+					<!--To do add buttons and widget here-->
+					<field name="state" invisible="True"/>
+					<button name="do_toggle_done"
+					        states="draft"
+					        attrs="{'invisible':[('state','in',['draft','cancel'])]}"
+					        string="Toggle Done"
+					        type="object"
+					        class="oe_highlight"
+					/>
+					<field name="stage_id"
+					       widget="statusbar"
+					       clickable="True"
+					       options="{'fold_field': 'fold'}"
+					/>
+				</header>
+				<sheet>
+						<!--To add form content-->
+					<div class="oe_tittle">
+						<label for="name" class="oe_edit_only"/>
+						<h1><field name="name"/></h1>
+						<h3>
+							<span class="oe_read_only">By</span>
+							<label for="user_id" class="oe_edit_only"/>
+							<field name="user_id" class="oe_inline"/>
+						</h3>
+					</div>
+					<!--More elements will be added from here...-->
+					<!--<field name="my_image" widget="image" class="oe_avatar"/>-->
+					<div name="buttons" class="oe_right oe_buttons_box">
+						<!--Smart buttons here-->
+						<button name=" %(action_todo_task_button)d"
+						        class="oe_stat_button"
+						        type="action"
+						        context="{'default_user_id': user_id}"
+						        icon="fa-tasks"
+						        string=""
+						        help="All to-do for this user">
+						        <field name="user_todo_count"
+						               widget="statinfo"
+						               string="User To-Dos"
+						        />
+						</button>
+					</div>
+					<!-- Details -->
+            <group name="top_group">
+              <group name="left_group">
+                <field name="date_deadline" />
+                <field name="effort_estimate" />
+                <separator string="References" />
+                <field name="refers_to" />
+              </group>
+              <group name="right_group">
+                <field name="tag_ids" widget="many2many_tags"/>
+              </group>
+            </group>
+          </sheet>
+          <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers" />
+              <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+
+      </field>
+    </record>
+
+
+	<!--Tree view here-->
+	<record id="todo_app.view_tree_todo_task" model="ir.ui.view">
+	    <field name="model">todo.task</field>
+	    <field name="arch" type="xml">
+	        <tree decoration-muted="is_done"
+	              decoration-bf="state=='open'"
+	              delete="false">
+	            <field name="name"/>
+		        <field name="user_id"/>
+		        <field name="is_done"/>
+		        <field name="state" invisible="1"/>
+	        </tree>
+	    </field>
+	</record>
+	
+	<!--Search view here-->
+	<record id="todo_app.view_filter_todo_task" model="ir.ui.view">
+	    <field name="model">todo.task</field>
+	    <field name="arch" type="xml">
+	        <search string="">
+	            <field name="name"/>
+		        <field name="user_id"/>
+		        <filter name="filter_not_done" string="Not Done" domain="[('is_done','=',False)]"/>
+		        <filter name="filter_done" string="Done" domain="[('is_done','!=',False)]"/>
+		        <separator/>
+		        <filter name="group_user" string="By User" context="{'group_by': user_id}"/>
+	        </search>
+	    </field>
+	</record>
+
+
+	<!--Calendar view here-->
+	<record id="view_calendar_todo_task" model="ir.ui.view">
+	   <field name="model">todo.task</field>
+	    <field name="arch" type="xml">
+	        <calendar date_start="date_deadline"
+	                  color="user_id"
+	                  display="[name]"
+	                  stage="[stage_id]">
+		        <!--fields used for display name-->
+	            <field name="name" />
+		        <field name="stage_id"/>
+	        </calendar>
+	    </field>
+	</record>
+
+	<!--graph view here-->
+	<record id="view_graph_todo_task" model="ir.ui.view">
+	   <field name="model">todo.task</field>
+	    <field name="arch" type="xml">
+	        <graph type="bar" date_start="date_deadline">
+	            <field name="name" />
+		        <field name="effort_estimate" type="measure"/>
+	        </graph>
+	    </field>
+	</record>
+
+	<!--Pivot view here-->
+		<!--graph view here-->
+	<record id="view_pivot_todo_task" model="ir.ui.view">
+	   <field name="model">todo.task</field>
+	    <field name="arch" type="xml">
+	        <pivot>
+	            <field name="stage_id" type="col" />
+		        <field name="user_id"/>
+		        <field name="date_deadline" interval="week"/>
+		        <field name="effort_estimate" type="measure"/>
+	        </pivot>
+	    </field>
+	</record>
+</odoo>
