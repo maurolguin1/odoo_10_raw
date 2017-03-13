@@ -11,7 +11,8 @@
     'website': 'http://www.jovanimoura.com.br',
     'version': '10.0.1.0.0',
     'depends': [
-        'base'
+        'base',
+        'decimal_precision'
     ],
     'data': [
             'views/library_book_view.xml',
