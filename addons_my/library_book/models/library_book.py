@@ -5,6 +5,7 @@
 from odoo import models, fields, api
 from odoo.addons import decimal_precision as dp
 from odoo.fields import Date as fDate
+from datetime import timedelta as td
 
 
 class LibraryBook(models.Model):
@@ -97,12 +98,28 @@ class LibraryBook(models.Model):
                     'Release must be in the past.'
                 )
 
+    # Implementing computed field date_release
     @api.depends('date_release')
     def _compute_age(self):
         today = fDate.from_string(fDate.today())
         for book in self.filtered('date_release'):
             delta = (fDate.from_string(book.date_release - today))
             book.age = delta.days
+
+    # Implementing write on the computed field
+    def _inverse_age(self):
+        today = fDate.from_string(fDate.today())
+        for book in self.filtered('date_release'):
+            d = td(days=book.age_days) - today
+            book.date_release = fDate.to_string(d)
+
+    # Implementing search on the computed field
+    def _search_age(self, operator, value):
+        today = fDate.to_string(fDate.today())
+        value_days = td(days=value)
+        value_date = fDate.to_string(today - value_days)
+        return [('date_release', operator, value_date)]
+
 
     # Using method name_get(), vide pag. 89D
     def name_get(self):
