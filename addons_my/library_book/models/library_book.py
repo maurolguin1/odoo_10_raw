@@ -22,6 +22,7 @@ class LibraryBook(models.Model):
                                    context={},
                                    domain=[],
                                    )
+    publisher_city = fields.Char('Publisher City', related='publisher_id.city')
     name = fields.Char(string='Title', required=True)
     short_name = fields.Char(
         string='Short Title',
@@ -81,6 +82,11 @@ class LibraryBook(models.Model):
         compute_sudo=False,
     )
 
+    # Referenced Field
+    ref_doc_id = fields.Reference(
+        selection='_referencable_models',
+        string='Referenced Documents'
+    )
 
     # Database constrains
     _sql_constraints = [
@@ -120,13 +126,18 @@ class LibraryBook(models.Model):
         value_date = fDate.to_string(today - value_days)
         return [('date_release', operator, value_date)]
 
+    # Referencable model
+    @api.model
+    def _referenceble_models(self):
+        models = self.env['res.request.link'].search([])
+        return [(x.object, x.name) for x in models]
 
     # Using method name_get(), vide pag. 89D
     def name_get(self):
         result = []
         for record in self:
             result.append(
-                (record.id, u'%s (%s)' % (record.name, record.date_released)
+                (record.id, u'%s (%s)' % (record.name, record.date_release)
             ))
         return result
 
