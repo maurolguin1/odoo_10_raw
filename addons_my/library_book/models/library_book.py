@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# © 2016 Jovani Moura
+# © 2017 Jovani Moura
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields
@@ -68,6 +68,22 @@ class LibraryBook(models.Model):
     retail_price = fields.Monetary('Retail Price',
                                    currency_field='currency_id' # optional
                                    )
+
+    # Database constrains
+    _sql_constraints = [
+        ('name_uniq',
+         'UNIQUE (name)',
+         'Book Title must be unique.'
+         )
+    ]
+
+    @api.constrains('date_release')
+    def _check_release(self):
+        for r in self:
+            if r.date_release > fields.Date.today():
+                raise models.ValidationError(
+                    'Release must be in the past.'
+                )
 
     # Using method name_get(), vide pag. 89
     def name_get(self):
