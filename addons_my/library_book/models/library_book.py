@@ -2,8 +2,9 @@
 # © 2017 Jovani Moura
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields
+from odoo import models, fields, api
 from odoo.addons import decimal_precision as dp
+from odoo.fields import Date as fDate
 
 
 class LibraryBook(models.Model):
@@ -69,6 +70,17 @@ class LibraryBook(models.Model):
                                    currency_field='currency_id' # optional
                                    )
 
+    # Computed field
+    age_days = fields.Float(
+        string='Days Since Release',
+        compute='_compute_age',
+        inverse='_inverse_age',
+        search='_search_age',
+        store=False,
+        compute_sudo=False,
+    )
+
+
     # Database constrains
     _sql_constraints = [
         ('name_uniq',
@@ -85,7 +97,14 @@ class LibraryBook(models.Model):
                     'Release must be in the past.'
                 )
 
-    # Using method name_get(), vide pag. 89
+    @api.depends('date_release')
+    def _compute_age(self):
+        today = fDate.from_string(fDate.today())
+        for book in self.filtered('date_release'):
+            delta = (fDate.from_string(book.date_release - today))
+            book.age = delta.days
+
+    # Using method name_get(), vide pag. 89D
     def name_get(self):
         result = []
         for record in self:
