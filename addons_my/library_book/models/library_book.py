@@ -8,8 +8,20 @@ from odoo.fields import Date as fDate
 from datetime import timedelta as td
 
 
+
+class BaseArchive(models.AbstractModel):
+    _name = 'base.archive'
+
+    active = fields.Boolean(default=True)
+
+    def do_archive(self):
+        for record in self:
+            record.active = not record.active
+
+
 class LibraryBook(models.Model):
     _name = 'library.book'
+    _inherit = 'base.archive'
     _description = 'Library Book'
     _order = 'date_release desc, name'
     _rec_name = 'short_name'
@@ -32,13 +44,16 @@ class LibraryBook(models.Model):
     author_ids = fields.Many2many(comodel_name="res.partner",
                                   string="Authors")
     notes = fields.Text(string="Internal Notes")
+
+    # Selection field with state or workflow
     state = fields.Selection(
-         string="State",
-         selection=[('draft', 'Not Available'),
-                    ('available', 'Available'),
-                    ('lost', 'Lost')]
+        [('draft', 'Unavailable'),
+         ('available', 'Available'),
+         ('borrowed', 'Borrowed'),
+         ('lost', 'Lost')],
+         'State' # status bar field
          )
-    # description = fields.HTML(string="Description",
+    # description = fields.HTML(string="Description",   # HTML field is deprecated since version 10.0
     #                             # optional
     #                             # sanitize=True,
     #                             # strip_style=False,
@@ -141,6 +156,14 @@ class LibraryBook(models.Model):
             ))
         return result
 
+    # Method for Selection field state p.119
+    @api.model
+    def is_allowed_transition(self, old_state, new_state):
+        allowed = [('draft', 'available'),
+                   ('available', 'borrowed'),
+                   ('borrowed', 'available'),
+                   ('available', 'lost'),
+                   ]
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -163,3 +186,12 @@ class ResPartner(models.Model):
     def _compute_count_books(self):
         for r in self:
             r.count_books = len(r.authored_book_ids)
+
+class LibraryMember(models.Model):
+    _name = 'library.member'
+    _inherits = {'res.partner': 'partner_id'}
+
+    partner_id = fields.Many2one('res.partner', ondelete='cascade')
+    date_start = fields.Date('Member Since')
+    date_end = fields.Date('Termination Date')
+    member_number = fields.Char()
