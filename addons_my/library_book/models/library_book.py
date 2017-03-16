@@ -147,7 +147,7 @@ class LibraryBook(models.Model):
         models = self.env['res.request.link'].search([])
         return [(x.object, x.name) for x in models]
 
-    # Using method name_get(), vide pag. 89D
+    # Using method name_get(), vide pag. 89
     def name_get(self):
         result = []
         for record in self:
@@ -169,15 +169,31 @@ class LibraryBook(models.Model):
 
     @api.multi
     def change_state(self, new_state):
+        # returned_book_ids is a list of book ids to return
+        books = self.env['library.book']
+        # books.browse(returned_book_ids).change_state('available')
         for book in self:
             if book.is_allowed_transition(book.state, new_state):
                 book.state = book.new_state
             else:
                 continue
 
+    @api.model
+    def get_all_libraly_members(self):
+        library_member_model = self.env['library.member']
+        return library_member_model.search([])
+
+
 class ResPartner(models.Model):
     _inherit = 'res.partner'
     _order = 'name'
+
+    # name = fields.Char('Name', required=True)
+    # email = fields.Char('Email')
+    # date = fields.Date('Date')
+    # is_company = fields.Boolean('Is a company')
+    # parent_id = fields.Many2one('res.partner', 'Related Company')
+    # chield_ids = fields.One2many('res.partner', 'parent_id', 'Contacts')
 
     book_ids = fields.Many2many('library.book',
                                string='Authored Books',
