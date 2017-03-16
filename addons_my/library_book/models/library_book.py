@@ -163,7 +163,17 @@ class LibraryBook(models.Model):
                    ('available', 'borrowed'),
                    ('borrowed', 'available'),
                    ('available', 'lost'),
-                   ]
+                   ('borrowed', 'lost'),
+                   ('lost', 'available')]
+        return (old_state, new_state) in allowed
+
+    @api.multi
+    def change_state(self, new_state):
+        for book in self:
+            if book.is_allowed_transition(book.state, new_state):
+                book.state = book.new_state
+            else:
+                continue
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
