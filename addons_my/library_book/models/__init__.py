@@ -4,5 +4,5 @@
 
 from . import library_book
 from . import library_book_categ
-from . import res_partner_ext
+# from . import res_partner_ext
 

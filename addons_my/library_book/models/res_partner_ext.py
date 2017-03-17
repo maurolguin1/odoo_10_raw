@@ -2,6 +2,8 @@
 # © 2017 Jovani Moura
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+# This file is getting in error when its putted on __init__.py, we get out for hour
+
 from odoo import models, fields, api
 
 class ResPartner(models.Model):
@@ -65,3 +67,11 @@ class ResPartner(models.Model):
             ('parent_id.name', 'like', name)
         ]
         return partner.search(domain)
+
+    @api.model
+    def partners_with_email(self, partners):
+        def predicate(partner):
+            if partner.email:
+                return True
+            return False
+        return partners.filter(lambda p: p.mail)
