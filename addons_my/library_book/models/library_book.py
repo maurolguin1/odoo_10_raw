@@ -293,3 +293,15 @@ class LibraryMember(models.Model):
     date_start = fields.Date('Member Since')
     date_end = fields.Date('Termination Date')
     member_number = fields.Char()
+
+class LibraryBookLoan(models.Model):
+    _name = 'library.book.loan'
+
+    book_id = fields.Many2one('library.book', 'Book', required=True)
+    member_id = fields.Many2one('library.member', 'Borrower', required=True)
+    state = fields.Selection(
+        [('ongoing',  'Ongoing',
+        'done', 'Done')],
+        'State',
+        default='ongoing',
+        required=True)
