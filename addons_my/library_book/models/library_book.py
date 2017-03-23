@@ -111,8 +111,7 @@ class LibraryBook(models.Model):
         ('name_uniq',
          'UNIQUE (name)',
          'Book Title must be unique.'
-         )
-    ]
+         )]
 
     @api.constrains('date_release')
     def _check_release(self):
@@ -159,8 +158,23 @@ class LibraryBook(models.Model):
             authors = book.author_ids.mapped('name')
             name = u'%s (%s)' % (book.title, u', '.join(authors))
             result.append((book.id, name))
-
         return result
+
+    # p. 144 pb. 121
+    @api.model
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+        args = [] if args is None else args.copy()
+        if not (name == '' and operator == 'ilike'):
+            args += [
+                '|', '|',
+                ('name', operator, name),
+                ('isbn', operator, name),
+                ('author_ids.name', operator, name)
+            ]
+        return super(LibraryBook, self)._name_search(
+            name='', args=args, operator='ilike', limit=limit, name_get_uid=name_get_uid
+        )
+
 
     # Method for Selection field state p.119
     @api.model
