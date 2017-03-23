@@ -11,17 +11,29 @@ class LibraryLoanWizard(models.TransientModel):
     book_ids = fields.Many2many('library.book', 'Books')
 
     # refactored in  Wizards and Code reuse p.159 (p.136 in the book).
-    # @api.multi
-    # def record_loans(self):
-    #     for wizard in self:
-    #         member = wizard.member_id
-    #         books = wizard.book_ids
-    #         loan = self.env['library.book.loan']
-    #         for book in books:
-    #             loan.create({
-    #                 'member_id': member.id,
-    #                 'book_id': book.id
-    #             })
+    @api.multi
+    def record_loans(self):
+        for wizard in self:
+            # member = wizard.member_id # outdated p.138 - p.b.115
+            books = wizard.book_ids
+            loan = self.env['library.book.loan']
+            for book in books:
+                values = self._prepare_loan(book)
+                loan.create(values)
+
+                # outdated p.138 - p.b.115
+                # loan.create({
+                #     'member_id': member.id,
+                #     'book_id': book.id
+                # })
+
+    # p.138 - pb. 115
+    @api.multi
+    def _prepare_loan(self, book):
+        return {
+            'member_id': self.member_id.id,
+            'book_id': self.book.id
+        }
 
     # refactored in  Wizards and Code reuse p.159 (p.136 in the book).
     @api.multi

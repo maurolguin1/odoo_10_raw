@@ -3,20 +3,18 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    'name': 'My Library',
-    'description': """Library to rent and consult books""",
+    'name': 'Library Return Date',
+    'description': """Returning Date from library book""",
     'category': 'Manufacturing',
     'author': 'Jôvani Moura',
     'maintainer': 'Jôvani',
     'website': 'http://www.jovanimoura.com.br',
     'version': '10.0.1.0.0',
     'depends': [
-        'base',
-        'decimal_precision'
+        'library_book',
     ],
     'data': [
-        'views/library_book_view.xml',
-        'views/library_loan_wizard_view.xml',
+            
     ],
     'installable': True,
     'license': 'AGPL-3'
