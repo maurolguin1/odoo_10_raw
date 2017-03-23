@@ -2,10 +2,11 @@
 # © 2017 Jovani Moura
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 from odoo.addons import decimal_precision as dp
 from odoo.fields import Date as fDate
 from datetime import timedelta as td
+
 
 
 
@@ -27,6 +28,7 @@ class LibraryBook(models.Model):
     _rec_name = 'short_name'
 
 
+    manager_remarks = fields.Text('Manager Remarks')
     publisher_id = fields.Many2one('res.partner',
                                    string='Publisher',
                                    # optional parameters
@@ -36,6 +38,7 @@ class LibraryBook(models.Model):
                                    )
     publisher_city = fields.Char('Publisher City', related='publisher_id.city')
     name = fields.Char(string='Title', required=True)
+    isbn = fields.Char('ISBN')
     short_name = fields.Char(
         string='Short Title',
         size=100, # For Char only
@@ -148,12 +151,15 @@ class LibraryBook(models.Model):
         return [(x.object, x.name) for x in models]
 
     # Using method name_get(), vide pag. 89
+    # Refactored p.144 pb.121
+    @api.model
     def name_get(self):
         result = []
-        for record in self:
-            result.append(
-                (record.id, u'%s (%s)' % (record.name, record.date_release)
-            ))
+        for book in self:
+            authors = book.author_ids.mapped('name')
+            name = u'%s (%s)' % (book.title, u', '.join(authors))
+            result.append((book.id, name))
+
         return result
 
     # Method for Selection field state p.119
@@ -182,6 +188,46 @@ class LibraryBook(models.Model):
     def get_all_libraly_members(self):
         library_member_model = self.env['library.member']
         return library_member_model.search([])
+
+    # p. 141 pb.118
+    @api.model
+    @api.returns('self', lambda rec: rec.id)
+    def create(self, values):
+        if not self.user_has_groups(
+            'library.group_library_manager'):
+            if 'manager_remarks' in values:
+                raise exceptions.UserError(
+                    'You are not allowed to modify '
+                    'manager_remarks')
+        return super(LibraryBook, self).create(values)
+
+    # p. 141 pb.118
+    @api.multi
+    def write(self, vals):
+        if not self.user_has_groups(
+            'library.group_library_manager'):
+            if 'manager_remarks' in vals:
+                raise exceptions.UserError(
+                    'You are not allowed to modify '
+                    'manager_remarks'
+                )
+        return super(LibraryBook, self).write(vals)
+
+    # got an error
+    # @api.model
+    # def fields_get(self,
+    #                allfields=None,
+    #                write_access=True,
+    #                attributes=None):
+    #     fields = super(LibraryBook, self).fields_get(
+    #         allfields=allfields,
+    #         write_access=write_access,
+    #         attributes=attributes)
+    #     if not self.user_has_groups(
+    #         'library.group_library_manager'):
+    #         if 'manager_remarks' in fields:
+    #             fields['manager_remarks']['readonly'] = True
+
 
 
 class ResPartner(models.Model):

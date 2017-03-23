@@ -17,6 +17,7 @@
     'data': [
         'views/library_book_view.xml',
         'views/library_loan_wizard_view.xml',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'license': 'AGPL-3'
