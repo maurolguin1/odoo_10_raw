@@ -365,3 +365,25 @@ class LibraryBookLoan(models.Model):
         'State',
         default='ongoing',
         required=True)
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+
+    @api.multi
+    def update_phone_number(self, new_number):
+        self.ensure_one()
+        company_as_superuser = self.sudo() # using sudo() p.149, pb.126
+        company_as_superuser.phone = new_number
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    @api.model
+    def stock_in_location(self, location):
+        product_in_loc = self.with_context(location=location.id, active_test=False ) # getting product.product recordset with a context modified p.152, pb.129
+        all_products = product_in_loc.search([]) # searching all products
+        stock_levels = [] # creating an empty array
+        for product in all_products:
+            if product.qty_available:
+                stock_levels.append((product.name, product.qty_available))
+        return stock_levels
