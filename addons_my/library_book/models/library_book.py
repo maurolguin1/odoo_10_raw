@@ -372,19 +372,20 @@ class LibraryMember(models.Model):
     member_number = fields.Char()
 
     # p.164
+    # step 1
     @api.multi
     def return_all_books(self):
         self.ensure_one()
-        wizard = self.env['library.returns.wizard']
-        values = {'member_id': self.id, book_ids=False}
-        specs = wizard._onchange_spec()
-        updates = wizard.onchange(values, ['member_id'], specs)
-        value = updates.get('value', {})
-        for name, val in value.iteritems():
+        wizard = self.env['library.returns.wizard'] # step 2
+        values = {'member_id': self.id, book_ids=False} # step 3
+        specs = wizard._onchange_spec() # step 4
+        updates = wizard.onchange(values, ['member_id'], specs) # step 5
+        value = updates.get('value', {}) # step 6
+        for name, val in value.iteritems(): # step 6
             if isinstance(val, tuple):
                 value[name] = val[0]
-        values.update(value)
-        record = wizard.create(values)
+        values.update(value) # step 6
+        record = wizard.create(values) # step 7
 
 
 class LibraryBookLoan(models.Model):
