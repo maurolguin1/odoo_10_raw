@@ -254,6 +254,7 @@ class ResPartner(models.Model):
     is_company = fields.Boolean('Is a company')
     parent_id = fields.Many2one('res.partner', 'Related Company')
     chield_ids = fields.One2many('res.partner', 'parent_id', 'Contacts')
+    country_id = fields.Many2one('res.country')
 
     book_ids = fields.Many2many('library.book',
                                string='Authored Books',
@@ -344,6 +345,22 @@ class ResPartner(models.Model):
     def get_companies(self, partners):
         return partners.mapped('parent_id')
 
+    # writting a raw queries p.154 / pb.131
+    @api.model
+    def partners_by_country(self):
+        sql = ('SELECT country_id, array_agg(id)'
+               'FROM res_partner'
+               'WHERE active=true AND country_id is NOT NULL'
+               'GROUP BY country_id')
+        self.env.cr.execute(sql)
+        country_model = self.env['res.country']
+        result = {}
+        for country_id, partner_ids in self.env.cr.fetchall():
+            country = country_model.browse(country_id)
+            partners = self.search([('id', 'in', tuple(partner_ids))])
+            result[country] = partners
+        return result
+
 
 class LibraryMember(models.Model):
     _name = 'library.member'
@@ -353,6 +370,22 @@ class LibraryMember(models.Model):
     date_start = fields.Date('Member Since')
     date_end = fields.Date('Termination Date')
     member_number = fields.Char()
+
+    # p.164
+    @api.multi
+    def return_all_books(self):
+        self.ensure_one()
+        wizard = self.env['library.returns.wizard']
+        values = {'member_id': self.id, book_ids=False}
+        specs = wizard._onchange_spec()
+        updates = wizard.onchange(values, ['member_id'], specs)
+        value = updates.get('value', {})
+        for name, val in value.iteritems():
+            if isinstance(val, tuple):
+                value[name] = val[0]
+        values.update(value)
+        record = wizard.create(values)
+
 
 class LibraryBookLoan(models.Model):
     _name = 'library.book.loan'
@@ -375,15 +408,17 @@ class ResCompany(models.Model):
         company_as_superuser = self.sudo() # using sudo() p.149, pb.126
         company_as_superuser.phone = new_number
 
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-
-    @api.model
-    def stock_in_location(self, location):
-        product_in_loc = self.with_context(location=location.id, active_test=False ) # getting product.product recordset with a context modified p.152, pb.129
-        all_products = product_in_loc.search([]) # searching all products
-        stock_levels = [] # creating an empty array
-        for product in all_products:
-            if product.qty_available:
-                stock_levels.append((product.name, product.qty_available))
-        return stock_levels
+# TODO: got an error here -- product.product doesn't exist, maybe we should install some module
+# class ProductProduct(models.Model):
+#     _inherit = 'product.product'
+#
+#     @api.model
+#     def stock_in_location(self, location):
+#         product_in_loc = self.with_context(location=location.id, active_test=False ) # getting product.product recordset with a context modified p.152, pb.129
+#         all_products = product_in_loc.search([]) # searching all products
+#         stock_levels = [] # creating an empty array
+#         for product in all_products:
+#             if product.qty_available:
+#                 stock_levels.append((product.name, product.qty_available))
+#         return stock_levels
+# TODO: got an error here -- product.product doesn't exist, maybe we should install some module

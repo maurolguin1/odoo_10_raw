@@ -58,3 +58,56 @@ class LibraryLoanWizard(models.TransientModel):
         if self.context.get('active_model' == 'library.member'):
             return self.self.context.get('active_id', False)
 
+
+class LibraryReturnsWizard(models.TransientModel):
+    _name = 'library.returns.wizard'
+
+    member_id = fields.Many2one('library.member', 'Member')
+    book_ids = fields.Many2many('library.books', 'Books')
+
+    @api.multi
+    def record_returns(self):
+        loan = self.env['library.book.loan']
+        for rec in self:
+            loans = loan.search([
+                ('state', '=', 'ongoing'),
+                ('book_id', '=', rec.book.ids.ids),
+                ('member_id', '=', rec.member_id.id)
+            ])
+            loans.write({'state': 'done'})
+            action = {
+                'type': 'ir.action.act_window',
+                'name': 'Borrower',
+                'res_model': 'library.member',
+                'view_mode': 'form,tree'
+            }
+            return action
+
+    @api.onchange('member_id')
+    def onchange_member(self):
+        loan = self.env['library.book.loan']
+        loans = loan.search([
+            ('state', '=', 'ongoning'),
+            ('member_id', '=', self.member_id.id)
+        ])
+        self.book_ids = loans.mapped('book_id')
+        result = {
+            'domain': {'book_ids': [
+                ('id', 'in', self.book_ids.ids)
+            ]}
+        }
+        late_domain = [
+            ('id', 'in', loans.ids),
+            ('expected_return_date', '<', fields.Date.today())
+        ]
+        late_loans = loans.search(late_domain)
+        if late_loans:
+            message = ('Warn the member that the following'
+                       'books are late:\n')
+            titles = late_loans.mapped('book_id.name')
+            result['warning'] = {
+                'title': 'Late Books',
+                'message': message + '\n'.join(titles)
+            }
+            return result
+
