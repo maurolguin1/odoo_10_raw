@@ -8,8 +8,6 @@ from odoo.fields import Date as fDate
 from datetime import timedelta as td
 
 
-
-
 class BaseArchive(models.AbstractModel):
     _name = 'base.archive'
 
