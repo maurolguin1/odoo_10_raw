@@ -1,0 +1,47 @@
+<odoo>
+
+    <!--Creating some action p.203-->
+    <act_window id="action_all_customers"
+                name="All Customers"
+                res_model="res.partner"
+                view_mode="tree,form"
+                domain="[('customer','=',True)]"
+                context="{'default_customer':True}"
+                limit="80"/>
+
+    <!--Creating the menu structure-->
+    <menuitem id="menu_custom_toplevel"
+              name="My custom menu"/>
+
+    <menuitem id="menu_custom_left"
+              name="This will appear in the left bar"
+              parent="menu_custom_toplevel"/>
+
+    <menuitem id="menu_all_customers"
+              parent="menu_custom_left"
+              action="action_all_customers"
+              sequence="10"
+              groups=""/>
+
+    <!--Especifying action for a specific view-->
+    <!--Creating a form view p.207-->
+    <record id="form_all_customers" model="ir.ui.view">
+        <field name="name">All customers</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!--Creating an action and telling the action from the previous recipe to use it-->
+    <record id="action_all_customers_form" model="ir.actions.act_window.view">
+        <field name="act_window_id" ref="action_all_customers"/>
+        <field name="view_id" ref="form_all_customers"/>
+        <field name="view_mode">form</field>
+        <field name="sequence">10</field>
+    </record>
+</odoo>

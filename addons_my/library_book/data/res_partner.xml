@@ -1,0 +1,10 @@
+<!--<odoo>-->
+
+    <!--<record id="base.main_company" model="res.company">-->
+        <!--<field name="name">Pack Publishing</field>-->
+    <!--</record>-->
+
+    <!--<record id="book_cookbook" model="library.book">-->
+        <!--<field name="publisher_id" ref="base.main_partner"/>-->
+    <!--</record>-->
+<!--</odoo>-->

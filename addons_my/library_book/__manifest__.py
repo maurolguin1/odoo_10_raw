@@ -17,6 +17,8 @@
     'data': [
         'views/library_book_view.xml',
         'views/library_loan_wizard_view.xml',
+        'views/partner_test_view.xml',
+        # 'data/res_partner.xml',
         'security/ir.model.access.csv',
     ],
     'installable': True,
