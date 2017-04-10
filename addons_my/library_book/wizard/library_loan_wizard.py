@@ -63,7 +63,7 @@ class LibraryReturnsWizard(models.TransientModel):
     _name = 'library.returns.wizard'
 
     member_id = fields.Many2one('library.member', 'Member')
-    book_ids = fields.Many2many('library.books', 'Books')
+    book_ids = fields.Many2many('library.book', 'Books')
 
     @api.multi
     def record_returns(self):
