@@ -31,3 +31,11 @@ class Main(http.Controller):
     @http.route('/hello', auth='public')
     def hello_world(self):
         return '<h1>Hello World!</h1>'
+
+    @http.route('/library_book/all-books', type='http', auth='none')
+    def all_books(self):
+        records = request.env['library.book'].sudo().search([])
+        result = '<html><body><table><tr><td>'
+        result += '</td></tr><tr><td>'.join(records.mapped('name'))
+        result += '</td></tr></table></body></html>'
+        return result

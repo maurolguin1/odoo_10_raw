@@ -7,7 +7,7 @@
     'description': 'User friendly features.',
     'author': 'Daniel Reis',
     'depends': [
-	    'todo_user'
+	'todo_user'
     ],
 	'data':     [
 		'security/ir.model.access.csv',

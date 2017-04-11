@@ -6,7 +6,7 @@
     'name': 'To-Do Tasks Management Assistant',
     'description': 'Mass edit your To-do backlog.',
     'author': 'Daniel Reis',
-    'depends': 'todo_user',
+    'depends': ['todo_app'],
 	'data': [
 		'views/todo_wizard_view.xml',
 	],

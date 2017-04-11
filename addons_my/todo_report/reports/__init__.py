@@ -2,4 +2,4 @@
 # © 2017 Jovani Moura
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from . import todo_model_report
+from . import todo_task_report

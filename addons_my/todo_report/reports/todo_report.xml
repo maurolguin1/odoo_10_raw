@@ -3,7 +3,7 @@
 <record id="paperformat_euro_landscape"
         model="report.paperformat">
     <field name="name">European A4 Landscape</field>
-    <field name="default" eval="True" />
+    <field name="default" eval="True"/>
     <field name="format">A4</field>
     <field name="page_height">0</field>
     <field name="page_width">0</field>
@@ -12,7 +12,7 @@
     <field name="margin_bottom">23</field>
     <field name="margin_left">7</field>
     <field name="margin_right">7</field>
-    <field name="header_line" eval="False" />
+    <field name="header_line" eval="False"/>
     <field name="header_spacing">35</field>
     <field name="dpi">90</field>
 </record>
@@ -33,7 +33,7 @@
          <!-- Report page content -->
          <div class="row bg-primary">
             <div class="col-xs-3">
-              <span class="glyphicon glyphicon-pushpin" />
+              <span class="glyphicon glyphicon-pushpin"/>
               What
             </div>
             <div class="col-xs-2">Who</div>
@@ -41,14 +41,15 @@
             <div class="col-xs-3">Where</div>
             <div class="col-xs-3">Watchers</div>
         </div>
-        <t t-set="follower_count" t-value="0" /><!-- Running total-->
+        <t t-set="follower_count" t-value="0"/><!-- Running total-->
         <t t-foreach="docs" t-as="o">
           <div class="row">
               <div class="col-xs-3">
-                  <h4><span t-field="o.name" /></h4>
+                  <h4><span t-field="o.name"/></h4>
               </div>
+          </div>
               <div class="col-xs-2">
-                  <span t-field="o.user_id" />
+                  <span t-field="o.user_id"/>
               </div>
               <div class="col-xs-1">
                   <span t-field="o.date_deadline" />
