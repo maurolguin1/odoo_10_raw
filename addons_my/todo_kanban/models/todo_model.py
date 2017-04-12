@@ -8,7 +8,7 @@ from odoo import models, fields
 class TodoTask(models.Model):
     _inherit = 'todo.task'
 
-
+    user_id = fields.Many2one('res.users', 'Responsible')
     color = fields.Integer('Color Index')
     priority = fields.Selection(
         [('0', 'Low'),

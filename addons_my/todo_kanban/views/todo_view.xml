@@ -30,7 +30,7 @@
                         <!--HTML QWeb template...-->
                         <!--Set the kanban card color:-->
                      <t t-name="kanban-box">
-                        <div t-attf-class="#{kanban_color(record.color.raw-value)} oe_kanban_global_click">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
                             <div class="o_dropdown_kanban dropdown">
                                 <!--Top-righ drop down menu here...-->
                                 <a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
