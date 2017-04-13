@@ -12,7 +12,8 @@
     'version': '10.0.1.0.0',
     'depends': [
         'base',
-        'decimal_precision'
+        'decimal_precision',
+        'report'
     ],
     'data': [
         'views/library_book_view.xml',
