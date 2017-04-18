@@ -13,13 +13,13 @@ SELECT id, picking_id,  FROM stock_partial_picking;
 SELECT * FROM shipping_shippingregister;
 
 -- Stock move here there are qty_expected
-SELECT * FROM stock_move;
+SELECT id, origin, name, product_qty, qty_expected, price_unit FROM stock_move WHERE product_id = 95850;
 SELECT id, origin, name, product_uos_qty, product_uom, product_qty,  qty_expected,  product_uos, partner_id,  product_id, picking_id, state, sale_line_id, purchase_line_id FROM stock_move;
 
 SELECT * FROM product_uom;
 
 -- Here in moment of purchase
-SELECT * FROM purchase_order_line;
+SELECT id, name, product_id, price_unit, product_qty FROM purchase_order_line WHERE product_id = 95850;
 
 SELECT id, product_uom,  product_qty, product_id, order_id, name, state, sale_order_line_id
 FROM purchase_order_line WHERE product_id = 95833;
