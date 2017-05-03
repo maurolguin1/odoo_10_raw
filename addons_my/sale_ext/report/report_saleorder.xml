@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_inherit" inherit_id="sale.report_saleorder_document">
+      <xpath expr="//div[@class='row mt32 mb32']/div[@t-if='doc.date_order']" position="replace">
+         <div t-if="doc.date_order" class="col-xs-3">
+            <strong t-if="doc.state not in ['draft','sent']">Date:</strong>
+            <strong t-if="doc.state in ['draft','sent']"> Date:</strong>
+        </div>
+      </xpath>
+
+       <xpath expr="//div[@class='row mt32 mb32']/div[@t-if='doc.user_id.name']" position="replace">
+         <div t-if="doc.user_id.name" class="col-xs-3">
+        <strong>Salesman:</strong>
+        <p t-field="doc.user_id"/>
+         </div>
+      </xpath>
+    </template>
+    
+</odoo>
