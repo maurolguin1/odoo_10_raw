@@ -24,7 +24,7 @@ import odoo.tools as tools
 import odoo.release as release
 from odoo import SUPERUSER_ID, api
 
-MANIFEST_NAMES = ('__manifest__.py', '__openerp__.py')
+MANIFEST_NAMES = ('__manifest__.py', '__manifest__.py')
 README = ['README.rst', 'README.md', 'README.txt']
 
 _logger = logging.getLogger(__name__)
