@@ -27,7 +27,7 @@ FROM product_product pp
 LEFT JOIN product_supplierinfo ps
   ON pp.id = ps.product_id;
 
-SELECT pt.id as "pt_id", pt.name as "pt_name", ps.product_id as "ps_product_id", pp.name as "pp_name", ps.id as "ps_id", pl.suppinfo_id as "pl_suppinfo_id", pt.standard_price as "pt_std_price",  pl.price as "pl_price"
+SELECT pt.id as "pt_id", pt.name as "pt_name", ps.product_id as "ps_product_id", pp.name as "pp_name", ps.id as "ps_id", pl.id as "pl_id", pl.suppinfo_id as "pl_suppinfo_id", pt.standard_price as "pt_std_price", ps.sequence as "ps_sequence", pl.price as "pl_price"
 FROM product_template pt
   LEFT JOIN product_supplierinfo ps ON pt.id = ps.product_id
   LEFT JOIN pricelist_partnerinfo pl ON ps.id = pl.suppinfo_id
