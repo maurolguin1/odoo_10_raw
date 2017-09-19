@@ -1,2 +1,0 @@
-stock-logistics-tracking
-stock-logistics-barcode
