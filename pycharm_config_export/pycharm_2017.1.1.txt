@@ -1,6 +1,5 @@
 site source: http://blog.csdn.net/xx1710/article/details/51725012
 License server
-http://idea.iteblog.com/key.php
 http://intellij.mandroid.cn (working on 20171010)
 http://idea.imsxm.com
 http://idea.lanyus.com
